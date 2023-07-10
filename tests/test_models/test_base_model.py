@@ -97,7 +97,7 @@ class TestBaseModel(unittest.TestCase):
         _dict = baseModel.__dict__
 
         self.assertEqual(
-                f"[{_className}] ({_id}) <{_dict}>",
+                f"[{_className}] ({_id}) {_dict}",
                 str(baseModel))
 
     def test_method_to_dict(self):
