@@ -9,8 +9,7 @@ import unittest
 import uuid
 import datetime
 
-from ...models.base_model import BaseModel
-
+from models.base_model import BaseModel
 
 class TestBaseModel(unittest.TestCase):
     """Tests for models/base_model.py"""
@@ -21,7 +20,7 @@ class TestBaseModel(unittest.TestCase):
         id = baseModel.id
 
         self.assertIsInstance(id, str)
-        self.assertEquals(str(uuid.UUID(id)), id)
+        self.assertEqual(str(uuid.UUID(id)), id)
 
     def test_uuid_unique(self):
         """Test: UUIDS are unique for N (1000) cases"""
