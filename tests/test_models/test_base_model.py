@@ -37,7 +37,7 @@ class TestBaseModel(unittest.TestCase):
         time_delta = datetime.datetime.now() - baseModel.created_at
 
         # Assert type
-        self.assertIsInstance(datetime.datetime, baseModel.created_at)
+        self.assertIsInstance(baseModel.created_at, datetime.datetime)
         # Difference within one second
         self.assertLessEqual(time_delta.seconds, 1)
 
@@ -47,7 +47,7 @@ class TestBaseModel(unittest.TestCase):
         time_delta = datetime.datetime.now() - baseModel.updated_at
 
         # Assert type
-        self.assertIsInstance(datetime.datetime, baseModel.updated_at)
+        self.assertIsInstance(baseModel.updated_at, datetime.datetime)
         # Difference within one second
         self.assertLessEqual(time_delta.seconds, 1)
 
