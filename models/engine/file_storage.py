@@ -28,15 +28,12 @@ class FileStorage():
     __file_path = "file.json"
     __objects = {}
 
-    def __init__(self):
-        pass
-
     def all(self):
         """
         Returns the dictionary __objects
         """
         from ..base_model import BaseModel
-        return {k: BaseModel(**v) for k, v in self.__objects}
+        return {k: BaseModel(**v) for k, v in self.__objects.copy().items()}
 
     def new(self, obj):
         """
