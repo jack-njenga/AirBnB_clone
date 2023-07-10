@@ -11,6 +11,7 @@ import datetime
 
 from models.base_model import BaseModel
 
+
 class TestBaseModel(unittest.TestCase):
     """Tests for models/base_model.py"""
 
@@ -35,6 +36,8 @@ class TestBaseModel(unittest.TestCase):
         baseModel = BaseModel()
         time_delta = datetime.datetime.now() - baseModel.created_at
 
+        # Assert type
+        self.assertIsInstance(datetime.datetime, baseModel.created_at)
         # Difference within one second
         self.assertLessEqual(time_delta.seconds, 1)
 
@@ -43,6 +46,8 @@ class TestBaseModel(unittest.TestCase):
         baseModel = BaseModel()
         time_delta = datetime.datetime.now() - baseModel.updated_at
 
+        # Assert type
+        self.assertIsInstance(datetime.datetime, baseModel.updated_at)
         # Difference within one second
         self.assertLessEqual(time_delta.seconds, 1)
 
@@ -99,10 +104,10 @@ class TestBaseModel(unittest.TestCase):
         """Test: check dictionary output from to_dict()"""
         baseModel = BaseModel()
 
-        _dict = baseModel.__dict__
+        _dict = baseModel.__dict__.copy()
         _dict['__class__'] = baseModel.__class__.__name__
-        _dict['created_at'] = _dict['created_at'].isoformat()
-        _dict['updated_at'] = _dict['updated_at'].isoformat()
+        _dict['created_at'] = baseModel.created_at.isoformat()
+        _dict['updated_at'] = baseModel.updated_at.isoformat()
 
         base_model_dict = baseModel.to_dict()
 
