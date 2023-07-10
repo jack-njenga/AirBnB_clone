@@ -33,11 +33,15 @@ class BaseModel():
         kwargs (dict): Used when updating obj
 
         """
-        if kwargs is not None:
+        if kwargs != 0:
             self.id = str(uuid.uuid4())
             tm = datetime.now()
             self.created_at = tm
             self.updated_at = tm
+        else:
+            for key, value in kwargs.items():
+                if key != "__class__":
+                    self.__dict__[key] = kwargs[key]
 
     def __str__(self):
         """
