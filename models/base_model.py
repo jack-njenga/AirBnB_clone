@@ -8,6 +8,7 @@ defines all common attributes/methods for other classes.
 
 import uuid
 from datetime import datetime
+from . import storage
 
 
 class BaseModel():
@@ -38,6 +39,7 @@ class BaseModel():
             tm = datetime.now()
             self.created_at = tm
             self.updated_at = tm
+            storage.new(self)
         else:
             for key, value in kwargs.items():
                 if key != "__class__":
@@ -61,6 +63,8 @@ class BaseModel():
         """
         tm = datetime.now()
         self.updated_at = tm
+        storage.new(self)
+        storage.save()
 
     def to_dict(self):
         """
