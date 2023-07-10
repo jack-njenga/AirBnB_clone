@@ -111,6 +111,33 @@ class TestBaseModel(unittest.TestCase):
 
         base_model_dict = baseModel.to_dict()
 
-        # Check if all keys are equal
-        self.assertTrue(
-                all((base_model_dict.get(k) == v for k, v in _dict.items())))
+        self.assertDictEqual(base_model_dict, _dict)
+
+    def test_kwargs(self):
+        """Test: object is created from kwargs dict"""
+        baseModel1 = BaseModel()
+        baseModel1.name = "Miles"
+        baseModel1.my_number = 42
+
+        baseModel1_dict = baseModel1.to_dict()
+
+        baseModel2 = BaseModel(**baseModel1_dict)
+        baseModel2_dict = baseModel2.to_dict()
+
+        self.assertFalse(baseModel1 is baseModel2)
+        self.assertDictEqual(baseModel1_dict, baseModel2_dict)
+
+    def test_kwargs_if_None_or_empty(self):
+        """Test: new instance if no kwargs dict"""
+        baseModel1 = BaseModel()
+        baseModel2 = BaseModel(None, None)
+        baseModel3 = BaseModel(None, {})
+
+        # Make sure UUIDs are different
+        self.assertNotEqual(baseModel1.id, baseModel2.id)
+        self.assertNotEqual(baseModel2.id, baseModel3.id)
+        self.assertNotEqual(baseModel1.id, baseModel3.id)
+
+        # Check created_at time incrementing
+        self.assertLessEqual(baseModel1.created_at, baseModel2.created_at)
+        self.assertLessEqual(baseModel2.created_at, baseModel3.created_at)
