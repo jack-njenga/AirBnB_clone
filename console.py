@@ -9,6 +9,7 @@ such as managing objects and their serialization/deserialization
 
 import cmd
 import shlex
+import re
 from models import *
 from models import storage
 
@@ -56,6 +57,7 @@ class HBNBCommand(cmd.Cmd):
 
         self.__completions["create"] = self.__models.keys()
         self.__completions["all"] = self.__models.keys()
+        self.__completions["count"] = self.__models.keys()
         self.__completions["show"] = items
         self.__completions["destroy"] = items
         self.__completions["update"] = []
@@ -73,6 +75,45 @@ class HBNBCommand(cmd.Cmd):
                 continue
             for key in obj.keys():
                 self.__completions["update"].append(f"{item} {key}")
+
+    def precmd(self, line):
+        command_re = r"(\w+)\.(\w+)\((.*)\)$"
+        update_re = r"\"([^\"]+)\", (\{.+\})"
+        classes = self.__models.keys()
+        actions = ["all", "count", "show", "destroy", "update", "create"]
+        matches = re.search(command_re, line)
+
+        if (not matches):
+            return cmd.Cmd.precmd(self, line)
+
+        g = list(matches.groups())
+
+        if (g[0] not in classes or g[1] not in actions):
+            return cmd.Cmd.precmd(self, line)
+
+        if (g[1] != "update"):
+            line = f"{g[1]} {g[0]} {g[2]}".strip()
+            return cmd.Cmd.precmd(self, line)
+
+        matches = re.search(update_re, g[2])
+
+        if (not matches):
+            g[2] = ' '.join(g[2].split(",", 1))
+            line = f"{g[1]} {g[0]} {g[2]}".strip()
+            return cmd.Cmd.precmd(self, line)
+
+        g_2 = list(matches.groups())
+        _dict = eval(g_2[1])
+        _cmds = []
+        for k, v in _dict.items():
+            _cmds.append(f"{g[1]} {g[0]} {g_2[0]} {k} {v}")
+
+        if (not _cmds):
+            line = f"{g[1]} {g[0]} {g_2[2]}".strip()
+            return cmd.Cmd.precmd(self, line)
+
+        self.cmdqueue = _cmds
+        return cmd.Cmd.precmd(self, "")
 
     def do_quit(self, arg):
         """Quit command to exit the program
@@ -184,6 +225,7 @@ class HBNBCommand(cmd.Cmd):
 
         if (args[0] not in self.__models):
             print("** class doesn't exist **")
+            return False
 
         for obj in objs.values():
             if (obj.__class__.__name__ == args[0]):
@@ -193,6 +235,32 @@ class HBNBCommand(cmd.Cmd):
         """do_all auto-completions
         """
         return self.autocomplete("all", text, line)
+
+    def do_count(self, arg):
+        """Count the number of occurrences of a class
+        """
+        args = shlex.split(arg)
+        objs = storage.all()
+
+        if (len(args) == 0):
+            print(0)
+            return False
+
+        if (args[0] not in self.__models):
+            print("** class doesn't exist **")
+            return False
+
+        count = 0
+        for obj in objs.values():
+            if (obj.__class__.__name__ == args[0]):
+                count += 1
+
+        print(count)
+
+    def complete_count(self, text, line, begidx, endidx):
+        """do_count auto-completions
+        """
+        return self.autocomplete("count", text, line)
 
     def do_update(self, arg):
         """Update an instance of an object and save changes to file
