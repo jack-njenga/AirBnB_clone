@@ -28,12 +28,30 @@ class FileStorage():
     __file_path = "file.json"
     __objects = {}
 
+    @property
+    def file_path(self):
+        """The file_path property."""
+        return self.__file_path
+
+    @file_path.setter
+    def file_path(self, value):
+        self.__file_path = value
+
+    @property
+    def objects(self):
+        """The objects property."""
+        return self.__objects
+
+    @objects.setter
+    def objects(self, value):
+        self.__objects = value
+
     def all(self):
         """
         Returns the dictionary __objects
         """
         from ..base_model import BaseModel
-        return {k: BaseModel(**v) for k, v in self.__objects.copy().items()}
+        return {k: BaseModel(**v) for k, v in self.objects.copy().items()}
 
     def new(self, obj):
         """
@@ -43,7 +61,7 @@ class FileStorage():
             obj(BaseModel): object to save in dictionary
         """
         key = f"{obj.__class__.__name__}.{obj.id}"
-        self.__objects[key] = obj.to_dict()
+        self.objects[key] = obj.to_dict()
 
     def save(self):
         """
@@ -51,7 +69,7 @@ class FileStorage():
         """
         with open(self.__file_path, "w+") as f:
             for key in self.__objects.keys():
-                line = json.dumps({key: self.__objects[key]})
+                line = json.dumps({key: self.objects[key]})
                 f.write(line + "\n")
 
     def reload(self):
@@ -64,4 +82,4 @@ class FileStorage():
                     obj = json.loads(line)
                     key = list(obj.keys())[0]
                     value = obj.get(key)
-                    self.__objects[key] = value
+                    self.objects[key] = value
