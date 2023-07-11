@@ -10,7 +10,6 @@ from models.base_model import BaseModel
 storage = file_storage.FileStorage()
 
 
-
 class TestFileStorage(unittest.TestCase):
     """
     Test cases:

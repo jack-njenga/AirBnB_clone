@@ -47,7 +47,8 @@ class BaseModel():
                     self.__dict__[key] = kwargs[key]
                 if key in ["created_at", "updated_at"]:
                     try:
-                        self.__dict__[key] = datetime.strptime(kwargs[key], fmt)
+                        tm = datetime.strptime(kwargs[key], fmt)
+                        self.__dict__[key] = tm
                     except Exception as e:
                         pass
 
