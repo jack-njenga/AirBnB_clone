@@ -51,7 +51,17 @@ class FileStorage():
         Returns the dictionary __objects
         """
         from ..base_model import BaseModel
-        return {k: BaseModel(**v) for k, v in self.objects.copy().items()}
+
+        objs = {}
+
+        for k, v in self.objects.copy().items():
+            id = k.split(".")[0]
+            match (id):
+                case "BaseModel":
+                    objs[k] = BaseModel(**v)
+                case _:
+                    pass
+        return objs
 
     def new(self, obj):
         """
