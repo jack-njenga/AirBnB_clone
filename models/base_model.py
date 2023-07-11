@@ -43,13 +43,13 @@ class BaseModel():
             storage.new(self)
         else:
             for key, value in kwargs.items():
-                if key ["created_at", "updated_at"]:
+                if key != "__class__":
+                    self.__dict__[key] = kwargs[key]
+                if key in ["created_at", "updated_at"]:
                     try:
                         self.__dict__[key] = datetime.strptime(kwargs[key], fmt)
                     except Exception as e:
                         pass
-                if key != "__class__":
-                    self.__dict__[key] = kwargs[key]
 
     def __str__(self):
         """
