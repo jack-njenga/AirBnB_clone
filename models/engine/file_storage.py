@@ -1,0 +1,67 @@
+#!/usr/bin/python3
+
+
+"""
+Module: file_storage
+Manage serialization and deserialization of objects to files
+"""
+
+
+import json
+from os import path
+
+
+class FileStorage():
+    """
+    File Storage class
+
+    attributes:
+        __file_path
+        __objects
+    methods:
+        all(self)
+        new(self, obj)
+        save(self)
+        reload(self)
+    """
+
+    __file_path = "file.json"
+    __objects = {}
+
+    def all(self):
+        """
+        Returns the dictionary __objects
+        """
+        from ..base_model import BaseModel
+        return {k: BaseModel(**v) for k, v in self.__objects.copy().items()}
+
+    def new(self, obj):
+        """
+        Sets in __objects a new value obj
+
+        Args:
+            obj(BaseModel): object to save in dictionary
+        """
+        key = f"{obj.__class__.__name__}.{obj.id}"
+        self.__objects[key] = obj.to_dict()
+
+    def save(self):
+        """
+        Serializes __objects to JSON and save to __file_path
+        """
+        with open(self.__file_path, "w+") as f:
+            for key in self.__objects.keys():
+                line = json.dumps({key: self.__objects[key]})
+                f.write(line + "\n")
+
+    def reload(self):
+        """
+        Deserializes to __objects JSON from __file_path
+        """
+        if (path.exists(self.__file_path)):
+            with open(self.__file_path, "r") as f:
+                for line in f:
+                    obj = json.loads(line)
+                    key = list(obj.keys())[0]
+                    value = obj.get(key)
+                    self.__objects[key] = value

@@ -8,6 +8,8 @@ defines all common attributes/methods for other classes.
 
 import uuid
 from datetime import datetime
+from . import storage
+fmt = "%Y-%m-%dT%H:%M:%S.%f"
 
 
 class BaseModel():
@@ -33,11 +35,21 @@ class BaseModel():
         kwargs (dict): Used when updating obj
 
         """
-        if kwargs is not None:
+        if not kwargs:
             self.id = str(uuid.uuid4())
             tm = datetime.now()
             self.created_at = tm
             self.updated_at = tm
+            storage.new(self)
+        else:
+            for k, v in kwargs.items():
+                if k != "__class__":
+                    self.__dict__[k] = v
+                if k in ["created_at", "updated_at"]:
+                    try:
+                        self.__dict__[k] = datetime.strptime(kwargs[k], fmt)
+                    except Exception as e:
+                        pass
 
     def __str__(self):
         """
@@ -57,13 +69,14 @@ class BaseModel():
         """
         tm = datetime.now()
         self.updated_at = tm
+        storage.new(self)
+        storage.save()
 
     def to_dict(self):
         """
         Returns a dictionary containing all
         keys/values of __dict__ of the instance.
         """
-        fmt = "%Y-%m-%dT%H:%M:%S.%f"
 
         new_dict = self.__dict__.copy()
         new_dict["__class__"] = self.__class__.__name__

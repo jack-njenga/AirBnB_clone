@@ -4,9 +4,10 @@
 This are Unittests for the FileStorage Class.
 """
 
-
 import unittest
 from models.engine import file_storage
+from models.base_model import BaseModel
+storage = file_storage.FileStorage()
 
 
 class TestFileStorage(unittest.TestCase):
@@ -16,21 +17,30 @@ class TestFileStorage(unittest.TestCase):
         Test for save
         Test for reload
     """
-
     def test_new(self):
         """
         Test if new adds objects
         (it should increase by one)
         """
-        
-        storage = FileStorage().all().copy()
-        test = BaseModel()
-        test.my_number = 89
-        FileStorage().new(test)
-        new = FileStorage().all()
-        self.assertEqual(len(new) - len(storage), 1)
+        my_obj = storage.all().copy()
+        base = BaseModel()
+        base.my_number = 89
+        storage.new(base)
+        new = storage.all()
+        self.assertEqual(len(new) - len(my_obj), 1)
 
-    def test_relod(self):
+    def test_reload(self):
         """
+        Test for relod
         """
-        pass
+        storage.reload()
+        count = len(storage.all())
+
+        base = BaseModel()
+        base.save()
+
+        # update the storage
+        storage.save()
+        storage.reload()
+        count_new = len(storage.all())
+        self.assertEqual(count_new - count, 1)
