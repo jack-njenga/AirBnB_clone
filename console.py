@@ -197,7 +197,7 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, arg):
         """Update an instance of an object and save changes to file
         """
-        args = shlex.split(arg, posix=True)
+        args = shlex.split(arg)
 
         if (len(args) == 0):
             print("** class name missing **")
