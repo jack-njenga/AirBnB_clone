@@ -34,7 +34,7 @@ class BaseModel():
         kwargs (dict): Used when updating obj
 
         """
-        if kwargs != 0:
+        if not kwargs:
             self.id = str(uuid.uuid4())
             tm = datetime.now()
             self.created_at = tm
