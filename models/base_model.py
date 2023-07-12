@@ -42,12 +42,13 @@ class BaseModel():
             self.updated_at = tm
             storage.new(self)
         else:
-            for k, v in kwargs.items():
-                if k != "__class__":
-                    self.__dict__[k] = v
-                if k in ["created_at", "updated_at"]:
+            for key, value in kwargs.items():
+                if key != "__class__":
+                    self.__dict__[key] = kwargs[key]
+                if key in ["created_at", "updated_at"]:
                     try:
-                        self.__dict__[k] = datetime.strptime(kwargs[k], fmt)
+                        tm = datetime.strptime(kwargs[key], fmt)
+                        self.__dict__[key] = tm
                     except Exception as e:
                         pass
 
