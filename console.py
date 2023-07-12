@@ -36,7 +36,10 @@ class HBNBCommand(cmd.Cmd):
     """
 
     prompt = "(hbnb) "
-    __models = {"BaseModel": base_model.BaseModel}
+    __models = {"BaseModel": base_model.BaseModel,
+                "Place": place.Place,
+                "Review": review.Review
+                }
     __completions = {}
 
     def __init__(self):
