@@ -51,6 +51,11 @@ class FileStorage():
         Returns the dictionary __objects
         """
         from ..base_model import BaseModel
+        from ..state import State
+        from ..city import City
+        from ..amenity import Amenity
+        from ..place import Place
+        from ..review import Review
 
         objs = {}
 
@@ -59,6 +64,16 @@ class FileStorage():
             match (id):
                 case "BaseModel":
                     objs[k] = BaseModel(**v)
+                case "State":
+                    objs[k] = State(**v)
+                case "City":
+                    objs[k] = City(**v)
+                case "Amenity":
+                    objs[k] = Amenity(**v)
+                case "Place":
+                    objs[k] = Place(**v)
+                case "Review":
+                    objs[k] = Review(**v)
                 case _:
                     pass
         return objs
