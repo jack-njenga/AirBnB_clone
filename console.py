@@ -17,6 +17,7 @@ from models import storage
 class HBNBCommand(cmd.Cmd):
     """
     HBNB management console class
+    Manages objects and other actions of the project
 
     Inherits:
         cmd.Cmd: provides methods for managing a command line
@@ -27,12 +28,11 @@ class HBNBCommand(cmd.Cmd):
         __completions (dict): autocomplete templates
 
     Methods:
-        autocomplete: run autocomplete for any action
         updateAutoComplete: update autocomplete templates on change
 
-        do_quit, do_EOF, do_all, do_show, do_update, do_create, do_destroy,
-        complete_all, complete_show, complete_update, complete_create,
-        complete_destroy
+        do_quit, do_EOF, do_all, do_show, do_update,
+        do_create, do_destroy, do_count
+        completedefault
     """
 
     prompt = "(hbnb) "
@@ -43,21 +43,42 @@ class HBNBCommand(cmd.Cmd):
         cmd.Cmd.__init__(self)
         self.updateAutoComplete()
 
-    def autocomplete(self, do, text, line):
-        m = line.partition(' ')[2]
-        offs = len(m) - len(text)
-        return [s[offs:] for s in self.__completions[do] if s.startswith(m)]
+    def completedefault(self, text, line, begidx, endidx):
+        """Override: Auto-complete all commands
+
+        Attributes:
+            text: The last argument in @line (separated by ' ')
+            line: the whole text
+            begidx: first index of text from beginning of line
+            endidx: last index of text from beginning of line
+
+        Returns:
+            list of auto-complete string options
+        """
+        mline = line.partition(' ')[2]
+        action = line.partition(' ')[0]
+        offset = len(mline) - len(text)
+
+        suggestions = []
+        for suggestion in self.__completions[action]:
+            if (suggestion.startswith(mline)):
+                suggestions.append(suggestion[offset:])
+        return suggestions
 
     def updateAutoComplete(self):
+        """Generate and update auto-complete schema
+        """
         objs = storage.all()
+        actions = ["create", "destroy", "update", "all", "show", "count"]
+        models = self.__models.keys()
 
         items = []
         for key in objs.keys():
             items.append(key.replace(".", " "))
 
-        self.__completions["create"] = self.__models.keys()
-        self.__completions["all"] = self.__models.keys()
-        self.__completions["count"] = self.__models.keys()
+        self.__completions["create"] = models
+        self.__completions["all"] = models
+        self.__completions["count"] = models
         self.__completions["show"] = items
         self.__completions["destroy"] = items
         self.__completions["update"] = []
@@ -77,6 +98,14 @@ class HBNBCommand(cmd.Cmd):
                 self.__completions["update"].append(f"{item} {key}")
 
     def precmd(self, line):
+        """Override: process line and allow for transformation
+
+        Attributes:
+            line: command string to process
+
+        Returns:
+            processed precmd string
+        """
         command_re = r"(\w+)\.(\w+)\((.*)\)$"
         update_re = r"\"([^\"]+)\", (\{.+\})"
         classes = self.__models.keys()
@@ -143,11 +172,6 @@ class HBNBCommand(cmd.Cmd):
         print(obj.id)
         obj.save()
 
-    def complete_create(self, text, line, begidx, endidx):
-        """do_create auto-completions
-        """
-        return self.autocomplete("create", text, line)
-
     def do_show(self, arg):
         """Print string representation of all or named classes
         """
@@ -173,11 +197,6 @@ class HBNBCommand(cmd.Cmd):
             return False
 
         print(objs[id])
-
-    def complete_show(self, text, line, begidx, endidx):
-        """do_show auto-completions
-        """
-        return self.autocomplete("show", text, line)
 
     def do_destroy(self, arg):
         """Destroy an instance of an object and save changes to file
@@ -207,11 +226,6 @@ class HBNBCommand(cmd.Cmd):
         storage.save()
         self.updateAutoComplete()
 
-    def complete_destroy(self, text, line, begidx, endidx):
-        """do_show auto-completions
-        """
-        return self.autocomplete("destroy", text, line)
-
     def do_all(self, arg):
         """Print string representation of all or named classes
         """
@@ -230,11 +244,6 @@ class HBNBCommand(cmd.Cmd):
         for obj in objs.values():
             if (obj.__class__.__name__ == args[0]):
                 print(obj)
-
-    def complete_all(self, text, line, begidx, endidx):
-        """do_all auto-completions
-        """
-        return self.autocomplete("all", text, line)
 
     def do_count(self, arg):
         """Count the number of occurrences of a class
@@ -256,11 +265,6 @@ class HBNBCommand(cmd.Cmd):
                 count += 1
 
         print(count)
-
-    def complete_count(self, text, line, begidx, endidx):
-        """do_count auto-completions
-        """
-        return self.autocomplete("count", text, line)
 
     def do_update(self, arg):
         """Update an instance of an object and save changes to file
@@ -316,13 +320,8 @@ class HBNBCommand(cmd.Cmd):
         storage.objects[id][args[2]] = args[3]
         storage.save()
 
-    def complete_update(self, text, line, begidx, endidx):
-        """do_update auto-completions
-        """
-        return self.autocomplete("update", text, line)
-
     def emptyline(self):
-        """override: Do not repeat previous command on empty line
+        """Override: Do not repeat previous command on empty line
         """
         pass
 
