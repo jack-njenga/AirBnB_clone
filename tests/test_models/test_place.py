@@ -12,6 +12,11 @@ class TestPlace(TestCase):
     """
     Test:
         - Inheritance
+        - Attributes
+        - Attributes types
+        - initialization_with_args
+        - to_dict method
+        - str repr
     """
     def test_Inheritance(self):
         """
