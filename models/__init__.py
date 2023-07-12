@@ -1,9 +1,10 @@
 from .engine import FileStorage
 
 __all__ = ["base_model",
+           "user",
            "state",
            "city",
-           "anemity",
+           "amenity",
            "place",
            "review"]
 

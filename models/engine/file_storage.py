@@ -51,6 +51,7 @@ class FileStorage():
         Returns the dictionary __objects
         """
         from ..base_model import BaseModel
+        from ..user import User
         from ..state import State
         from ..city import City
         from ..amenity import Amenity
@@ -63,6 +64,8 @@ class FileStorage():
             id = k.split(".")[0]
             if id == "BaseModel":
                 objs[k] = BaseModel(**v)
+            elif id == "User":
+                objs[k] = User(**v)
             elif id == "State":
                 objs[k] = State(**v)
             elif id == "City":
