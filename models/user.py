@@ -22,7 +22,7 @@ class User(BaseModel):
     """
     email = ""
     password = ""
-    firstname = ""
+    first_name = ""
     last_name = ""
 
     def __init__(self, *args, **kwargs):

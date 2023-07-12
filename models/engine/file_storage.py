@@ -61,21 +61,18 @@ class FileStorage():
 
         for k, v in self.objects.copy().items():
             id = k.split(".")[0]
-            match (id):
-                case "BaseModel":
-                    objs[k] = BaseModel(**v)
-                case "State":
-                    objs[k] = State(**v)
-                case "City":
-                    objs[k] = City(**v)
-                case "Amenity":
-                    objs[k] = Amenity(**v)
-                case "Place":
-                    objs[k] = Place(**v)
-                case "Review":
-                    objs[k] = Review(**v)
-                case _:
-                    pass
+            if id == "BaseModel":
+                objs[k] = BaseModel(**v)
+            elif id == "State":
+                objs[k] = State(**v)
+            elif id == "City":
+                objs[k] = City(**v)
+            elif id == "Amenity":
+                objs[k] = Amenity(**v)
+            elif id == "Place":
+                objs[k] = Place(**v)
+            elif id == "Review":
+                objs[k] = Review(**v)
         return objs
 
     def new(self, obj):
