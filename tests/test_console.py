@@ -66,12 +66,20 @@ class TestConsole(TestCase):
         with patch('sys.stdout', new=StringIO()) as f:
             Bnb().onecmd("create")
             self.assertEqual(f.getvalue(), err)
-        pass
+
+        err = "** class doesn't exist **\n"
+        with patch('sys.stdout', new=StringIO()) as f:
+            Bnb().onecmd("create Nairobi")
+            self.assertEqual(f.getvalue(), err)
 
     def test_show(self):
         """
         Test for show error output
         """
+        err = "** instance id missing **\n"
+        with patch('sys.stdout', new=StringIO()) as f:
+            Bnb().onecmd("show User")
+            self.assertEqual(f.getvalue(), err)
 
         err = "** no instance found **\n"
         with patch('sys.stdout', new=StringIO()) as f:
@@ -86,6 +94,11 @@ class TestConsole(TestCase):
         err = "** instance id missing **\n"
         with patch('sys.stdout', new=StringIO()) as f:
             Bnb().onecmd("destroy City")
+            self.assertEqual(f.getvalue(), err)
+
+        err = "** no instance found **\n"
+        with patch('sys.stdout', new=StringIO()) as f:
+            Bnb().onecmd("destroy State sochi")
             self.assertEqual(f.getvalue(), err)
 
     def test_all(self):
