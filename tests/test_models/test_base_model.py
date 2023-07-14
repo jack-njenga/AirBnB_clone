@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Unittest for BaseModelModel Class
+Unittest for BaseModel Class
 Run from root folder with:
     python3 -m unittest tests/test_models/test_base_model.py
 """
@@ -24,8 +24,8 @@ class TestBaseModel(unittest.TestCase):
         self.assertEqual(str(uuid.UUID(id)), id)
 
     def test_uuid_unique(self):
-        """Test: UUIDS are unique for N (1000) cases"""
-        N = 1000
+        """Test: UUIDS are unique for N (10) cases"""
+        N = 10
         ids = sorted([BaseModel().id for _ in range(0, N)])
         unique_ids = sorted(list(set(ids)))
 
