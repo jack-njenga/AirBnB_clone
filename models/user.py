@@ -30,13 +30,12 @@ class User(BaseModel):
         Intialization
 
         """
+        super().__init__()
 
-        fmt = "%Y-%m-%dT%H:%M:%S.%f"
         if len(kwargs) > 0:
+            base_list = list(BaseModel().__dict__.keys())
+            base_list.append("__class__")
+
             for key in kwargs.keys():
-                if key in ["created_at", "updated_at"]:
-                    self.__dict__[key] = datetime.strptime(kwargs[key], fmt)
-                elif key != "__class__":
+                if key not in base_list:
                     self.__dict__[key] = kwargs[key]
-        else:
-            super().__init__()

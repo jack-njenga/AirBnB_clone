@@ -5,6 +5,7 @@ This file contans tests for the User class
 """
 import unittest
 from models.user import User
+from datetime import datetime
 
 
 class TestUser(unittest.TestCase):
@@ -51,6 +52,8 @@ class TestUser(unittest.TestCase):
         self.assertEqual(user.password, "airbnb1234")
         self.assertEqual(user.first_name, "air")
         self.assertEqual(user.last_name, "bnb")
+        self.assertTrue(hasattr(user, "id"))
+        self.assertTrue(type(user.created_at) == datetime)
 
     def test_Inheritance(self):
         """
