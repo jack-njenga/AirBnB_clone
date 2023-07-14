@@ -4,7 +4,6 @@
 This is the user class that inherits from BaseModel class.
 """
 from models.base_model import BaseModel
-from datetime import datetime
 
 
 class User(BaseModel):
@@ -30,12 +29,7 @@ class User(BaseModel):
         Intialization
 
         """
-        super().__init__()
-
-        if len(kwargs) > 0:
-            base_list = list(BaseModel().__dict__.keys())
-            base_list.append("__class__")
-
-            for key in kwargs.keys():
-                if key not in base_list:
-                    self.__dict__[key] = kwargs[key]
+        super().__init__(*args, **kwargs)
+        for key, value in kwargs.items():
+            if key not in ["__class__", "created_at", "updated_at", "id"]:
+                self.__dict__[key] = value
