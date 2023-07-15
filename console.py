@@ -46,10 +46,6 @@ class HBNBCommand(cmd.Cmd):
                 }
     __completions = {}
 
-    def __init__(self):
-        cmd.Cmd.__init__(self)
-        self.updateAutoComplete()
-
     def completedefault(self, text, line, begidx, endidx):
         """Override: Auto-complete all commands
 
@@ -103,6 +99,10 @@ class HBNBCommand(cmd.Cmd):
                 continue
             for key in obj.keys():
                 self.__completions["update"].append(f"{item} {key}")
+
+    def preloop(self):
+        self.updateAutoComplete()
+        return super().preloop()
 
     def precmd(self, line):
         """Override: process line and allow for transformation

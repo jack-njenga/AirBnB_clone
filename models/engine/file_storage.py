@@ -92,10 +92,8 @@ class FileStorage():
         """
         Serializes __objects to JSON and save to __file_path
         """
-        with open(self.__file_path, "w+") as f:
-            for key in self.__objects.keys():
-                line = json.dumps({key: self.objects[key]})
-                f.write(line + "\n")
+        with open(self.__file_path, "w") as f:
+            json.dump(self.objects, f)
 
     def reload(self):
         """
@@ -103,8 +101,6 @@ class FileStorage():
         """
         if (path.exists(self.__file_path)):
             with open(self.__file_path, "r") as f:
-                for line in f:
-                    obj = json.loads(line)
-                    key = list(obj.keys())[0]
-                    value = obj.get(key)
+                obj = json.load(f)
+                for key, value in obj.items():
                     self.objects[key] = value
