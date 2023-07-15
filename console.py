@@ -238,10 +238,12 @@ class HBNBCommand(cmd.Cmd):
         """
         args = shlex.split(arg)
         objs = storage.all()
+        lst = []
 
         if (len(args) == 0):
             for obj in objs.values():
-                print(obj)
+                lst.append(str(obj))
+            print(lst)
             return False
 
         if (args[0] not in self.__models):
@@ -250,7 +252,8 @@ class HBNBCommand(cmd.Cmd):
 
         for obj in objs.values():
             if (obj.__class__.__name__ == args[0]):
-                print(obj)
+                lst.append(str(obj))
+        print(lst)
 
     def do_count(self, arg):
         """Count the number of occurrences of a class
