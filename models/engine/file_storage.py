@@ -6,9 +6,7 @@ Module: file_storage
 Manage serialization and deserialization of objects to files
 """
 
-
 import json
-from os import path
 
 
 class FileStorage():
@@ -50,33 +48,7 @@ class FileStorage():
         """
         Returns the dictionary __objects
         """
-        from ..base_model import BaseModel
-        from ..user import User
-        from ..state import State
-        from ..city import City
-        from ..amenity import Amenity
-        from ..place import Place
-        from ..review import Review
-
-        objs = {}
-
-        for k, v in self.objects.copy().items():
-            id = k.split(".")[0]
-            if id == "BaseModel":
-                objs[k] = BaseModel(**v)
-            elif id == "User":
-                objs[k] = User(**v)
-            elif id == "State":
-                objs[k] = State(**v)
-            elif id == "City":
-                objs[k] = City(**v)
-            elif id == "Amenity":
-                objs[k] = Amenity(**v)
-            elif id == "Place":
-                objs[k] = Place(**v)
-            elif id == "Review":
-                objs[k] = Review(**v)
-        return objs
+        return self.__objects
 
     def new(self, obj):
         """
@@ -85,22 +57,39 @@ class FileStorage():
         Args:
             obj(BaseModel): object to save in dictionary
         """
-        key = f"{obj.__class__.__name__}.{obj.id}"
-        self.objects[key] = obj.to_dict()
+        name = obj.to_dict()["__class__"]
+        i_d = obj.to_dict()["id"]
+
+        key = name + "." + i_d
+        self.__objects[key] = obj
 
     def save(self):
         """
         Serializes __objects to JSON and save to __file_path
         """
-        with open(self.__file_path, "w") as f:
-            json.dump(self.objects, f)
+        json_obj = {}
+        self.reload()
+        for key in self.__objects:
+            json_obj[key] = self.__objects[key].to_dict()
+        with open(self.__file_path, 'w+', encoding="utf-8") as f:
+            json.dump(json_obj, f)
 
     def reload(self):
         """
         Deserializes to __objects JSON from __file_path
         """
-        if (path.exists(self.__file_path)):
-            with open(self.__file_path, "r") as f:
+        from ..base_model import BaseModel
+        from ..user import User
+        from ..state import State
+        from ..city import City
+        from ..amenity import Amenity
+        from ..place import Place
+        from ..review import Review
+
+        try:
+            with open(self.__file_path, 'r', encoding="utf-8") as f:
                 obj = json.load(f)
-                for key, value in obj.items():
-                    self.objects[key] = value
+            for key in obj.keys():
+                self.__objects[key] = eval(obj[key]["__class__"])(**obj[key])
+        except Exception:
+            pass
