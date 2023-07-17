@@ -86,14 +86,14 @@ class FileStorage():
             obj(BaseModel): object to save in dictionary
         """
         key = f"{obj.__class__.__name__}.{obj.id}"
-        self.objects[key] = obj.to_dict()
+        self.__objects[key] = obj.to_dict()
 
     def save(self):
         """
         Serializes __objects to JSON and save to __file_path
         """
         with open(self.__file_path, "w") as f:
-            json.dump(self.objects, f)
+            json.dump(self.__objects, f)
 
     def reload(self):
         """
@@ -103,4 +103,4 @@ class FileStorage():
             with open(self.__file_path, "r") as f:
                 obj = json.load(f)
                 for key, value in obj.items():
-                    self.objects[key] = value
+                    self.__objects[key] = value
