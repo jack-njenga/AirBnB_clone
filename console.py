@@ -104,15 +104,8 @@ class HBNBCommand(cmd.Cmd):
         self.updateAutoComplete()
         return super().preloop()
 
-    def precmd(self, line):
-        """Override: process line and allow for transformation
-
-        Attributes:
-            line: command string to process
-
-        Returns:
-            processed precmd string
-        """
+    def default(self, line):
+        self.updateAutoComplete()
         command_re = r"(\w+)\.(\w+)\((.*)\)$"
         update_re = r"\"([^\"]+)\", (\{.+\})"
         classes = self.__models.keys()
@@ -120,36 +113,34 @@ class HBNBCommand(cmd.Cmd):
         matches = re.search(command_re, line)
 
         if (not matches):
-            return cmd.Cmd.precmd(self, line)
+            print("*** Unknown syntax: {}".format(line))
+            return
 
         g = list(matches.groups())
 
         if (g[0] not in classes or g[1] not in actions):
-            return cmd.Cmd.precmd(self, line)
-
-        if (g[1] != "update"):
-            line = f"{g[1]} {g[0]} {g[2]}".strip()
-            return cmd.Cmd.precmd(self, line)
+            print("*** Unknown syntax: {}".format(line))
+            return
 
         matches = re.search(update_re, g[2])
 
-        if (not matches):
-            g[2] = ' '.join(g[2].split(",", 1))
+        if (not matches):  # Non dictionary representation
+            if (g[2]):
+                g_2 = g[2].split(',')
+                g_2[0] = g_2[0].replace("'", '')
+                g_2[0] = g_2[0].replace('"', '')
+                g[2] = ' '.join(g_2)
+
             line = f"{g[1]} {g[0]} {g[2]}".strip()
-            return cmd.Cmd.precmd(self, line)
+            return cmd.Cmd.onecmd(self, line)
 
         g_2 = list(matches.groups())
         _dict = eval(g_2[1])
-        _cmds = []
         for k, v in _dict.items():
-            _cmds.append(f"{g[1]} {g[0]} {g_2[0]} {k} {v}")
-
-        if (not _cmds):
-            line = f"{g[1]} {g[0]} {g_2[2]}".strip()
-            return cmd.Cmd.precmd(self, line)
-
-        self.cmdqueue = _cmds
-        return cmd.Cmd.precmd(self, "")
+            if isinstance(v, str):
+                v = f"'{v}'"
+            cmd.Cmd.onecmd(self, f"{g[1]} {g[0]} {g_2[0]} {k} {v}")
+        return
 
     def do_quit(self, arg):
         """Quit command to exit the program
@@ -273,7 +264,6 @@ class HBNBCommand(cmd.Cmd):
         for obj in objs.values():
             if (obj.__class__.__name__ == args[0]):
                 count += 1
-
         print(count)
 
     def do_update(self, arg):
