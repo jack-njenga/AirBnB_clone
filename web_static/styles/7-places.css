@@ -1,0 +1,35 @@
+.places {
+        display: flex;
+	max-width: 1000px;
+	margin: 0 auto;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+.places h1 {
+        display: flex;
+	width: 100%;
+	padding-left: 25px;
+	font-size: 30px;
+        align-self: top;
+}
+
+.places article {
+        display: flex;
+	width: 390px;
+	padding: 20px;
+	margin: 20px;
+	border: 1px solid #FF5A5F;
+	border-radius: 4px;
+	justify-content: center;
+        text-align: center;
+}
+
+.places article h2 {
+        display: flex;
+	font-size: 30px;
+	margin: 0 auto;
+}
+
+.places article:hover {
+        opacity: 70%;
+}
