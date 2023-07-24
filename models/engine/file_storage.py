@@ -6,7 +6,6 @@ Module: file_storage
 Manage serialization and deserialization of objects to files
 """
 
-
 import json
 from os import path
 
